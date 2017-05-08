@@ -13,7 +13,8 @@ const mockConfig = {
     userProperties: {
       nameProp: 'name',
       emailProp: 'email',
-      createdAtProp: 'createdAt'
+      createdAtProp: 'createdAt',
+      customProp: 'custom'
     },
     appId: '1'
   }
@@ -45,6 +46,7 @@ test('it adds the correct user context to the boot config', function(assert) {
   set(service.user, 'email', actualUser.email);
   set(service.user, 'name', actualUser.name);
   set(service.user, 'createdAt', actualUser.createdAt);
+  set(service.user, 'custom', actualUser.custom);
 
   run(() => service.start({
     custom: actualUser.custom
@@ -55,7 +57,7 @@ test('it adds the correct user context to the boot config', function(assert) {
     app_id: mockConfig.intercom.appId,
     name: actualUser.name,
     email: actualUser.email,
-    created_at: actualUser.createdAt,
+    createdAt: actualUser.createdAt,
     custom: actualUser.custom
   };
   // jscs:enable requireCamelCaseOrUpperCaseIdentifiers

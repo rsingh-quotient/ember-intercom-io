@@ -46,10 +46,15 @@ export default Service.extend({
     };
 
     if (get(this, '_hasUserContext')) {
-      obj.name = get(this, '_userNameProp');
-      obj.email = get(this, '_userEmailProp');
-      if (get(this, '_userCreatedAtProp')) {
-        obj.created_at = get(this, '_userCreatedAtProp');
+      let userProperties = get(this, 'config.userProperties');
+      let keys = Object.keys(userProperties);
+
+      for (let i = 0; i < keys.length; i++) {
+        let property = get(this, `config.userProperties.${keys[i]}`).toString();
+
+        if (this.user[property]) {
+          obj[get(userProperties, keys[i])] = this.user[property];
+        }
       }
     }
     // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
