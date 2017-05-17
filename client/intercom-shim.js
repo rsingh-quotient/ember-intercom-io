@@ -23,7 +23,9 @@
     s.async = true;
     s.src = 'https://widget.intercom.io/widget/' + config.intercom.appId;
     var x = d.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
+    if (config.intercom.appId) {
+      x.parentNode.insertBefore(s, x);
+    }
   }
 
   var ic = window.Intercom;
