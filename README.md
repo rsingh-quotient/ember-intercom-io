@@ -11,6 +11,11 @@
 This README outlines the details of collaborating on this Ember addon.
 
 ## Setup
+## Compatibility
+
+* Ember.js v4.12 or above
+* Ember CLI v4.12 or above
+* Node.js v18 or above
 
 **Install this addon with ember-cli** `ember install ember-intercom-io`
 
@@ -31,6 +36,7 @@ module.exports = function(environment) {
   },
   ...
 };
+## Installation
 
 ```
 
@@ -64,6 +70,7 @@ export default Ember.Service.extend({
 * `git clone` this repository
 * `npm install`
 * `bower install`
+## Usage
 
 ## Running
 
@@ -71,6 +78,7 @@ export default Ember.Service.extend({
 * Visit your app at http://localhost:4200.
 
 ## Running Tests
+## Contributing
 
 * `ember test`
 * `ember test --server`
@@ -78,6 +86,7 @@ export default Ember.Service.extend({
 ## Building
 
 * `ember build`
+## License
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
 

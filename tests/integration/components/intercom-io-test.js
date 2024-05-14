@@ -1,13 +1,8 @@
-import Ember from 'ember';
-import {
-  moduleForComponent,
-  test
-} from 'ember-qunit';
+import { run } from '@ember/runloop';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
-
-const {
-  run
-} = Ember;
 
 let intercomCommandArgs = {};
 
@@ -30,24 +25,24 @@ const mockConfig = {
   }
 };
 
-moduleForComponent('intercom-io', 'Integration | Component | intercom io', {
-  integration: true,
+module('Integration | Component | intercom io', function(hooks) {
+  setupRenderingTest(hooks);
 
-  beforeEach() {
-    this.register('service:config', mockConfig, { instantiate: false });
-    this.inject.service('intercom');
+  hooks.beforeEach(function() {
+    this.owner.register('service:config', mockConfig, { instantiate: false });
+    this.intercom = this.owner.lookup('service:intercom');
     this.set('intercom.api', intercomStub);
-  }
-});
-
-test('it renders', function(assert) {
-  assert.expect(2);
-  let oldStartCount = (intercomCommandArgs.boot || []).length;
-  this.render(hbs`{{intercom-io}}`);
-
-  assert.equal(this.$().text().trim(), '');
-  run.next(() => {
-    assert.equal(intercomCommandArgs.boot.length - oldStartCount, 1, 'Intercom service "start" was invoked');
   });
 
+  test('it renders', async function(assert) {
+    assert.expect(2);
+    let oldStartCount = (intercomCommandArgs.boot || []).length;
+    await render(hbs`{{intercom-io}}`);
+
+    assert.equal(this.element.textContent.trim(), '');
+    run.next(() => {
+      assert.equal(intercomCommandArgs.boot.length - oldStartCount, 1, 'Intercom service "start" was invoked');
+    });
+
+  });
 });

@@ -1,12 +1,9 @@
-import Ember from 'ember';
-import { moduleFor } from 'ember-qunit';
+import { run } from '@ember/runloop';
+import { set } from '@ember/object';
+import { module } from 'qunit';
+import { setupTest } from 'ember-qunit';
 import test from 'dummy/tests/ember-sinon-qunit/test';
 import sinon from 'sinon';
-
-const {
-  run,
-  set
-} = Ember;
 
 const mockConfig = {
   intercom: {
@@ -22,46 +19,48 @@ const mockConfig = {
 
 let intercomStub = null;
 
-moduleFor('service:intercom', 'Unit | Service | intercom', {
-  beforeEach() {
-    this.register('service:config', mockConfig, { instantiate: false });
+module('Unit | Service | intercom', function(hooks) {
+  setupTest(hooks);
+
+  hooks.beforeEach(function() {
+    this.owner.register('service:config', mockConfig, { instantiate: false });
 
     intercomStub = sinon.stub();
 
-    this.subject().set('api', intercomStub);
-    this.subject().set('config', mockConfig.intercom);
-  }
-});
+    this.owner.lookup('service:intercom').set('api', intercomStub);
+    this.owner.lookup('service:intercom').set('config', mockConfig.intercom);
+  });
 
-test('it adds the correct user context to the boot config', function(assert) {
-  let actualUser = {
-    name: 'foo',
-    email: 'foo@foo.com',
-    createdAt: new Date(),
-    custom: 'my-custom-property'
-  };
+  test('it adds the correct user context to the boot config', function(assert) {
+    let actualUser = {
+      name: 'foo',
+      email: 'foo@foo.com',
+      createdAt: new Date(),
+      custom: 'my-custom-property'
+    };
 
-  let service = this.subject();
+    let service = this.owner.lookup('service:intercom');
 
-  set(service.user, 'email', actualUser.email);
-  set(service.user, 'name', actualUser.name);
-  set(service.user, 'createdAt', actualUser.createdAt);
-  set(service.user, 'custom', actualUser.custom);
+    set(service.user, 'email', actualUser.email);
+    set(service.user, 'name', actualUser.name);
+    set(service.user, 'createdAt', actualUser.createdAt);
+    set(service.user, 'custom', actualUser.custom);
 
-  run(() => service.start({
-    custom: actualUser.custom
-  }));
+    run(() => service.start({
+      custom: actualUser.custom
+    }));
 
-  // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-  let expectedBootConfig = {
-    app_id: mockConfig.intercom.appId,
-    name: actualUser.name,
-    email: actualUser.email,
-    createdAt: actualUser.createdAt,
-    custom: actualUser.custom
-  };
-  // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
+    // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+    let expectedBootConfig = {
+      app_id: mockConfig.intercom.appId,
+      name: actualUser.name,
+      email: actualUser.email,
+      createdAt: actualUser.createdAt,
+      custom: actualUser.custom
+    };
+    // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
 
-  assert.equal(!!intercomStub.calledOnce, true, 'it called the intercom module');
-  sinon.assert.calledWith(intercomStub, 'boot', expectedBootConfig);
+    assert.equal(!!intercomStub.calledOnce, true, 'it called the intercom module');
+    sinon.assert.calledWith(intercomStub, 'boot', expectedBootConfig);
+  });
 });

@@ -1,14 +1,9 @@
-import Ember from 'ember';
+import { merge } from '@ember/polyfills';
+import Service from '@ember/service';
+import { computed, get } from '@ember/object';
+import { assert } from '@ember/debug';
+import { scheduleOnce } from '@ember/runloop';
 import intercom from 'intercom';
-
-const {
-  get,
-  merge,
-  Service,
-  computed,
-  assert,
-  run: { scheduleOnce }
-} = Ember;
 
 export default Service.extend({
   api: intercom,
@@ -31,9 +26,9 @@ export default Service.extend({
   },
 
   _hasUserContext: computed('user', '_userNameProp', '_userEmailProp', '_userCreatedAtProp', function() {
-    return !!get(this, 'user') &&
-           !!get(this, '_userNameProp') &&
-           !!get(this, '_userEmailProp');
+    return !!this.user &&
+           !!this._userNameProp &&
+           !!this._userEmailProp;
   }),
 
   _intercomBootConfig: computed('_hasUserContext', function() {
@@ -45,7 +40,7 @@ export default Service.extend({
       app_id: appId
     };
 
-    if (get(this, '_hasUserContext')) {
+    if (this._hasUserContext) {
       let userProperties = get(this, 'config.userProperties');
       let keys = Object.keys(userProperties);
 
@@ -63,15 +58,15 @@ export default Service.extend({
   }),
 
   start(bootConfig = {}) {
-    let _bootConfig = merge(get(this, '_intercomBootConfig'), bootConfig);
-    scheduleOnce('afterRender', () => this.get('api')('boot', _bootConfig));
+    let _bootConfig = merge(this._intercomBootConfig, bootConfig);
+    scheduleOnce('afterRender', () => this.api('boot', _bootConfig));
   },
 
   stop() {
-    scheduleOnce('afterRender', () => this.get('api')('shutdown'));
+    scheduleOnce('afterRender', () => this.api('shutdown'));
   },
 
   update(properties = {}) {
-    scheduleOnce('afterRender', () => this.get('api')('update', properties));
+    scheduleOnce('afterRender', () => this.api('update', properties));
   }
 });
